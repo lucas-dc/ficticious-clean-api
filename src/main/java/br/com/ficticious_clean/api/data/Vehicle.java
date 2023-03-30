@@ -16,7 +16,7 @@ public class Vehicle {
     private String name;
     private String make;
     private String model;
-    private Integer manufactureDate;
+    private Integer productionYear;
     private BigDecimal cityAverageGasConsumption;
     private BigDecimal highwayAverageGasConsumption;
 
@@ -52,12 +52,12 @@ public class Vehicle {
         this.model = model;
     }
 
-    public Integer getManufactureDate() {
-        return manufactureDate;
+    public Integer getProductionYear() {
+        return productionYear;
     }
 
-    public void setManufactureDate(Integer manufactureDate) {
-        this.manufactureDate = manufactureDate;
+    public void setProductionYear(Integer productionYear) {
+        this.productionYear = productionYear;
     }
 
     public BigDecimal getCityAverageGasConsumption() {
