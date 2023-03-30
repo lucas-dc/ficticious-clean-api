@@ -74,8 +74,8 @@ public class VehicleControllerTest {
                 .andExpect(jsonPath(fistElementFromJson+".make").value("Volkswagen"))
                 .andExpect(jsonPath(fistElementFromJson+".model").value("Fusca"))
                 .andExpect(jsonPath(fistElementFromJson+".productionYear").value(1970))
-                .andExpect(jsonPath(fistElementFromJson+".cityAverageGasConsumption").value(8.6))
-                .andExpect(jsonPath(fistElementFromJson+".highwayAverageGasConsumption").value(10.5));
+                .andExpect(jsonPath(fistElementFromJson+".cityAverageFuelConsumption").value(8.6))
+                .andExpect(jsonPath(fistElementFromJson+".highwayAverageFuelConsumption").value(10.5));
 
     }
 
@@ -85,8 +85,8 @@ public class VehicleControllerTest {
         vehicle.setMake("Volkswagen");
         vehicle.setModel("Fusca");
         vehicle.setProductionYear(1970);
-        vehicle.setCityAverageGasConsumption(new BigDecimal("8.6"));
-        vehicle.setHighwayAverageGasConsumption(new BigDecimal("10.5"));
+        vehicle.setCityAverageFuelConsumption(new BigDecimal("8.6"));
+        vehicle.setHighwayAverageFuelConsumption(new BigDecimal("10.5"));
         return vehicle;
     }
 }

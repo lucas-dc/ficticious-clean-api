@@ -17,8 +17,8 @@ public class Vehicle {
     private String make;
     private String model;
     private Integer productionYear;
-    private BigDecimal cityAverageGasConsumption;
-    private BigDecimal highwayAverageGasConsumption;
+    private BigDecimal cityAverageFuelConsumption;
+    private BigDecimal highwayAverageFuelConsumption;
 
     public Long getId() {
         return id;
@@ -60,19 +60,19 @@ public class Vehicle {
         this.productionYear = productionYear;
     }
 
-    public BigDecimal getCityAverageGasConsumption() {
-        return cityAverageGasConsumption;
+    public BigDecimal getCityAverageFuelConsumption() {
+        return cityAverageFuelConsumption;
     }
 
-    public void setCityAverageGasConsumption(BigDecimal cityAverageGasConsumption) {
-        this.cityAverageGasConsumption = cityAverageGasConsumption;
+    public void setCityAverageFuelConsumption(BigDecimal cityAverageFuelConsumption) {
+        this.cityAverageFuelConsumption = cityAverageFuelConsumption;
     }
 
-    public BigDecimal getHighwayAverageGasConsumption() {
-        return highwayAverageGasConsumption;
+    public BigDecimal getHighwayAverageFuelConsumption() {
+        return highwayAverageFuelConsumption;
     }
 
-    public void setHighwayAverageGasConsumption(BigDecimal highwayAverageGasConsumption) {
-        this.highwayAverageGasConsumption = highwayAverageGasConsumption;
+    public void setHighwayAverageFuelConsumption(BigDecimal highwayAverageFuelConsumption) {
+        this.highwayAverageFuelConsumption = highwayAverageFuelConsumption;
     }
 }

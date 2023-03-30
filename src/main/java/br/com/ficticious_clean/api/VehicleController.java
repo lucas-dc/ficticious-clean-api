@@ -1,5 +1,7 @@
 package br.com.ficticious_clean.api;
 
+import br.com.ficticious_clean.api.data.FuelConsumptionRequestDTO;
+import br.com.ficticious_clean.api.data.FuelConsumptionResponseDTO;
 import br.com.ficticious_clean.api.data.Vehicle;
 import br.com.ficticious_clean.api.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,11 @@ public class VehicleController {
     @GetMapping
     public List<Vehicle> findAll() {
         return vehicleService.findAll();
+    }
+
+    @GetMapping("/fuel-cost-forecast")
+    public List<FuelConsumptionResponseDTO> listVehicles(@RequestBody FuelConsumptionRequestDTO fuelConsumptionRequestDTO) {
+        return vehicleService.getFuelCostForecast(fuelConsumptionRequestDTO);
     }
 
     @PostMapping

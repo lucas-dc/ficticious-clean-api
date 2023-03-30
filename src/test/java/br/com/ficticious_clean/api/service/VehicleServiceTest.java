@@ -44,8 +44,8 @@ public class VehicleServiceTest {
         assertEquals("Volkswagen", savedVehicle.getMake());
         assertEquals("Fusca", savedVehicle.getModel());
         assertEquals(1970, savedVehicle.getProductionYear().intValue());
-        assertEquals(new BigDecimal("8.6"), savedVehicle.getCityAverageGasConsumption());
-        assertEquals(new BigDecimal("10.5"), savedVehicle.getHighwayAverageGasConsumption());
+        assertEquals(new BigDecimal("8.6"), savedVehicle.getCityAverageFuelConsumption());
+        assertEquals(new BigDecimal("10.5"), savedVehicle.getHighwayAverageFuelConsumption());
     }
 
     private Vehicle createVehicle() {
@@ -54,8 +54,8 @@ public class VehicleServiceTest {
         vehicle.setMake("Volkswagen");
         vehicle.setModel("Fusca");
         vehicle.setProductionYear(1970);
-        vehicle.setCityAverageGasConsumption(new BigDecimal("8.6"));
-        vehicle.setHighwayAverageGasConsumption(new BigDecimal("10.5"));
+        vehicle.setCityAverageFuelConsumption(new BigDecimal("8.6"));
+        vehicle.setHighwayAverageFuelConsumption(new BigDecimal("10.5"));
         return vehicle;
     }
 }
