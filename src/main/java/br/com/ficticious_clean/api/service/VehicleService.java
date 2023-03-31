@@ -39,11 +39,6 @@ public class VehicleService {
                     BigDecimal totalFuelConsumption = cityConsumption.add(highwayConsumption, new MathContext(3, RoundingMode.FLOOR));
                     BigDecimal totalFuelCost = calculateFuelCost(totalFuelConsumption, fuelConsumptionRequestDTO.getFuelPrice());
 
-                    System.out.println("#### cityConsumption: "+cityConsumption);
-                    System.out.println("#### highwayConsumption: "+highwayConsumption);
-                    System.out.println("#### totalFuelConsumption: "+totalFuelConsumption);
-                    System.out.println("#### totalFuelCost: "+totalFuelCost);
-
                     fuelConsumptionResponseDTO.setName(e.getName());
                     fuelConsumptionResponseDTO.setMake(e.getMake());
                     fuelConsumptionResponseDTO.setModel(e.getModel());
