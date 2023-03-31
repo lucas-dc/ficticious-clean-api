@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.math.RoundingMode;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,36 +20,41 @@ public class VehicleService {
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    private static final MathContext PRECISION = new MathContext(2);
-
     public List<Vehicle> findAll() {
         return vehicleRepository.findAll();
     }
 
     public List<FuelConsumptionResponseDTO> getFuelCostForecast(FuelConsumptionRequestDTO fuelConsumptionRequestDTO) {
-        List<FuelConsumptionResponseDTO> response = new ArrayList<>();
+        List<FuelConsumptionResponseDTO> responseDTO = new ArrayList<>();
 
         List<Vehicle> vehicles = vehicleRepository.findAll();
 
-        vehicles.forEach(e -> {
-            FuelConsumptionResponseDTO fuelConsumptionResponseDTO = new FuelConsumptionResponseDTO();
+        Optional.of(vehicles)
+                .orElse(Collections.emptyList())
+                .forEach(e -> {
+                    FuelConsumptionResponseDTO fuelConsumptionResponseDTO = new FuelConsumptionResponseDTO();
 
-            BigDecimal cityConsumption = calculateFuelConsumption(fuelConsumptionRequestDTO.getCityRouteDistance(), e.getCityAverageFuelConsumption());
-            BigDecimal highwayConsumption = calculateFuelConsumption(fuelConsumptionRequestDTO.getHighwayRouteDistance(), e.getHighwayAverageFuelConsumption());
-            BigDecimal totalFuelConsumption = cityConsumption.add(highwayConsumption, PRECISION);
-            BigDecimal totalFuelCost = calculateFuelCost(totalFuelConsumption, fuelConsumptionRequestDTO.getFuelPrice());
+                    BigDecimal cityConsumption = calculateFuelConsumption(fuelConsumptionRequestDTO.getCityRouteDistance(), e.getCityAverageFuelConsumption());
+                    BigDecimal highwayConsumption = calculateFuelConsumption(fuelConsumptionRequestDTO.getHighwayRouteDistance(), e.getHighwayAverageFuelConsumption());
+                    BigDecimal totalFuelConsumption = cityConsumption.add(highwayConsumption, new MathContext(3, RoundingMode.FLOOR));
+                    BigDecimal totalFuelCost = calculateFuelCost(totalFuelConsumption, fuelConsumptionRequestDTO.getFuelPrice());
 
-            fuelConsumptionResponseDTO.setName(e.getName());
-            fuelConsumptionResponseDTO.setMake(e.getMake());
-            fuelConsumptionResponseDTO.setModel(e.getModel());
-            fuelConsumptionResponseDTO.setProductionYear(e.getProductionYear());
-            fuelConsumptionResponseDTO.setTotalFuelConsumption(totalFuelConsumption);
-            fuelConsumptionResponseDTO.setTotalFuelCost(totalFuelCost);
+                    System.out.println("#### cityConsumption: "+cityConsumption);
+                    System.out.println("#### highwayConsumption: "+highwayConsumption);
+                    System.out.println("#### totalFuelConsumption: "+totalFuelConsumption);
+                    System.out.println("#### totalFuelCost: "+totalFuelCost);
 
-            response.add(fuelConsumptionResponseDTO);
-        });
+                    fuelConsumptionResponseDTO.setName(e.getName());
+                    fuelConsumptionResponseDTO.setMake(e.getMake());
+                    fuelConsumptionResponseDTO.setModel(e.getModel());
+                    fuelConsumptionResponseDTO.setProductionYear(e.getProductionYear());
+                    fuelConsumptionResponseDTO.setTotalFuelConsumption(totalFuelConsumption);
+                    fuelConsumptionResponseDTO.setTotalFuelCost(totalFuelCost);
 
-        return response.stream()
+                    responseDTO.add(fuelConsumptionResponseDTO);
+                });
+
+        return responseDTO.stream()
                 .sorted(Comparator.comparing(FuelConsumptionResponseDTO::getTotalFuelCost))
                 .collect(Collectors.toList());
     }
@@ -59,12 +63,12 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
-    private BigDecimal calculateFuelConsumption(BigDecimal totalRouteDistance, BigDecimal averageFuelConsumption) {
-        return totalRouteDistance.divide(averageFuelConsumption, PRECISION);
+    private BigDecimal calculateFuelConsumption(BigDecimal routeDistance, BigDecimal averageFuelConsumption) {
+        return routeDistance.divide(averageFuelConsumption, 2, RoundingMode.FLOOR);
     }
 
     private BigDecimal calculateFuelCost(BigDecimal fuelConsumption, BigDecimal fuelPrice) {
-        return fuelConsumption.multiply(fuelPrice, PRECISION);
+        return fuelConsumption.multiply(fuelPrice, new MathContext(3, RoundingMode.FLOOR));
     }
 
 }

@@ -7,6 +7,7 @@ import br.com.ficticious_clean.api.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,12 +22,12 @@ public class VehicleController {
     }
 
     @GetMapping("/fuel-cost-forecast")
-    public List<FuelConsumptionResponseDTO> listVehicles(@RequestBody FuelConsumptionRequestDTO fuelConsumptionRequestDTO) {
+    public List<FuelConsumptionResponseDTO> listVehicles(@Valid @RequestBody FuelConsumptionRequestDTO fuelConsumptionRequestDTO) {
         return vehicleService.getFuelCostForecast(fuelConsumptionRequestDTO);
     }
 
     @PostMapping
-    public Vehicle save(@RequestBody Vehicle vehicle) {
+    public Vehicle save(@Valid @RequestBody Vehicle vehicle) {
         return vehicleService.save(vehicle);
     }
 }
