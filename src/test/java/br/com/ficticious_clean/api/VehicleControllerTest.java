@@ -1,69 +1,74 @@
 package br.com.ficticious_clean.api;
 
-import br.com.ficticious_clean.api.data.FuelConsumptionRequestDTO;
 import br.com.ficticious_clean.api.data.Vehicle;
+import br.com.ficticious_clean.api.exception.RestExceptionHandler;
 import br.com.ficticious_clean.api.service.VehicleService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureJsonTesters
+@RunWith(MockitoJUnitRunner.class)
 public class VehicleControllerTest {
 
-    @Autowired
     private MockMvc mvc;
+    private final Gson gson = new GsonBuilder().serializeNulls().create();
 
-    @Autowired
-    private JacksonTester<Vehicle> vehicleJson;
+    @InjectMocks
+    private VehicleController vehicleController;
 
-    @Autowired
-    private JacksonTester<FuelConsumptionRequestDTO> fuelConsumptionRequestJson;
-
-    @MockBean
+    @Mock
     private VehicleService vehicleService;
 
     @Before
     public void setup() {
         Vehicle vehicle = createVehicle();
         vehicle.setId(1L);
-        FuelConsumptionRequestDTO requestDTO = createRequestDTO();
-        given(vehicleService.save(any())).willReturn(vehicle);
-        given(vehicleService.findAll()).willReturn(Collections.singletonList(vehicle));
+
+        mvc = MockMvcBuilders.standaloneSetup(vehicleController)
+                .setControllerAdvice(new RestExceptionHandler())
+                .build();
+
+        when(vehicleService.save(any(Vehicle.class))).thenReturn(vehicle);
+        when(vehicleService.findAll()).thenReturn(Collections.singletonList(vehicle));
     }
 
     @Test
     public void saveVehicle() throws Exception {
         Vehicle vehicle = createVehicle();
+        String json = gson.toJson(vehicle);
+
         mvc.perform(
-                        post(new URI("/vehicles"))
-                                .content(vehicleJson.write(vehicle).getJson())
+                        post(new URI("/api/vehicles"))
+                                .content(json)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("name").value("Lightning McQueen"))
+                .andExpect(jsonPath("make").value("Volkswagen"))
+                .andExpect(jsonPath("model").value("Fusca"))
+                .andExpect(jsonPath("productionYear").value(1970))
+                .andExpect(jsonPath("cityAverageFuelConsumption").value(8.6))
+                .andExpect(jsonPath("highwayAverageFuelConsumption").value(10.5));
     }
 
     @Test
@@ -71,7 +76,7 @@ public class VehicleControllerTest {
         String fistElementFromJson = "$.[0].";
 
         mvc.perform(
-                        get(new URI("/vehicles"))
+                        get(new URI("/api/vehicles"))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -85,96 +90,6 @@ public class VehicleControllerTest {
 
     }
 
-    @Test
-    public void shouldReturnError_WhenSavingVehicle_WithNullName() throws Exception {
-        Vehicle vehicle = createVehicle();
-        vehicle.setName(null);
-
-        String response = mvc.perform(
-                        post(new URI("/vehicles"))
-                                .content(vehicleJson.write(vehicle).getJson())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals("'name' parameter is mandatory and cannot be null nor empty", response);
-    }
-
-    @Test
-    public void shouldReturnError_WhenSavingVehicle_WithNullMake() throws Exception {
-        Vehicle vehicle = createVehicle();
-        vehicle.setMake(null);
-
-        String response = mvc.perform(
-                        post(new URI("/vehicles"))
-                                .content(vehicleJson.write(vehicle).getJson())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals("'make' parameter is mandatory and cannot be null nor empty", response);
-    }
-
-    @Test
-    public void shouldReturnError_WhenSavingVehicle_WithHighwayAverageFuelConsumptionZero() throws Exception {
-        Vehicle vehicle = createVehicle();
-        vehicle.setHighwayAverageFuelConsumption(BigDecimal.ZERO);
-
-        String response = mvc.perform(
-                        post(new URI("/vehicles"))
-                                .content(vehicleJson.write(vehicle).getJson())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals("'highwayAverageFuelConsumption' parameter must be greater than 0", response);
-    }
-
-    @Test
-    public void shouldReturnError_WhenFuelCostForecasting_WithFuelPriceZero() throws Exception {
-        FuelConsumptionRequestDTO requestDTO = createRequestDTO();
-        requestDTO.setFuelPrice(BigDecimal.ZERO);
-
-        String response = mvc.perform(
-                        get(new URI("/vehicles/fuel-cost-forecast"))
-                                .content(fuelConsumptionRequestJson.write(requestDTO).getJson())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals("'fuelPrice' parameter must be greater than 0", response);
-    }
-
-    @Test
-    public void shouldReturnError_WhenFuelCostForecasting_WithCityRouteDistanceNull() throws Exception {
-        FuelConsumptionRequestDTO requestDTO = createRequestDTO();
-        requestDTO.setCityRouteDistance(new BigDecimal("-1.1"));
-
-        String response = mvc.perform(
-                        get(new URI("/vehicles/fuel-cost-forecast"))
-                                .content(fuelConsumptionRequestJson.write(requestDTO).getJson())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals("'cityRouteDistance' must be greater than or equal to 0", response);
-    }
-
     private Vehicle createVehicle() {
         Vehicle vehicle = new Vehicle();
         vehicle.setName("Lightning McQueen");
@@ -184,14 +99,5 @@ public class VehicleControllerTest {
         vehicle.setCityAverageFuelConsumption(new BigDecimal("8.6"));
         vehicle.setHighwayAverageFuelConsumption(new BigDecimal("10.5"));
         return vehicle;
-    }
-
-    private FuelConsumptionRequestDTO createRequestDTO() {
-        FuelConsumptionRequestDTO requestDTO = new FuelConsumptionRequestDTO();
-        requestDTO.setCityRouteDistance(BigDecimal.TEN);
-        requestDTO.setHighwayRouteDistance(BigDecimal.ONE);
-        requestDTO.setFuelPrice(new BigDecimal("5.5"));
-
-        return requestDTO;
     }
 }

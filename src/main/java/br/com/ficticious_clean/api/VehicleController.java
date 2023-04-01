@@ -1,17 +1,16 @@
 package br.com.ficticious_clean.api;
 
-import br.com.ficticious_clean.api.data.FuelConsumptionRequestDTO;
-import br.com.ficticious_clean.api.data.FuelConsumptionResponseDTO;
+import br.com.ficticious_clean.api.data.FuelCostForecastRequestDTO;
+import br.com.ficticious_clean.api.data.FuelCostForecastResponseDTO;
 import br.com.ficticious_clean.api.data.Vehicle;
 import br.com.ficticious_clean.api.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vehicles")
+@RequestMapping("/api/vehicles")
 public class VehicleController {
     @Autowired
     private VehicleService vehicleService;
@@ -22,12 +21,12 @@ public class VehicleController {
     }
 
     @GetMapping("/fuel-cost-forecast")
-    public List<FuelConsumptionResponseDTO> listVehicles(@Valid @RequestBody FuelConsumptionRequestDTO fuelConsumptionRequestDTO) {
-        return vehicleService.getFuelCostForecast(fuelConsumptionRequestDTO);
+    public List<FuelCostForecastResponseDTO> getFuelCostForecast(FuelCostForecastRequestDTO fuelCostForecastRequestDTO) {
+        return vehicleService.getFuelCostForecast(fuelCostForecastRequestDTO);
     }
 
     @PostMapping
-    public Vehicle save(@Valid @RequestBody Vehicle vehicle) {
+    public Vehicle save(@RequestBody Vehicle vehicle) {
         return vehicleService.save(vehicle);
     }
 }

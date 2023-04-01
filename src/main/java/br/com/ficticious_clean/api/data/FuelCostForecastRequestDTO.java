@@ -5,7 +5,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-public class FuelConsumptionRequestDTO {
+public class FuelCostForecastRequestDTO {
 
     @Positive(message="'fuelPrice' parameter must be greater than 0")
     @NotNull(message="'fuelPrice' parameter cannot be null")

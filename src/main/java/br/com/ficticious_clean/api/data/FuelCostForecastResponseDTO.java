@@ -2,7 +2,7 @@ package br.com.ficticious_clean.api.data;
 
 import java.math.BigDecimal;
 
-public class FuelConsumptionResponseDTO {
+public class FuelCostForecastResponseDTO {
 
     private String name;
     private String make;
