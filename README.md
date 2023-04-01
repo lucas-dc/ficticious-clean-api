@@ -5,7 +5,7 @@ Project for TOTVS recruitment process.
 1. Import project to your favorite IDE;
 2. Run/execute project;
 3. There are three endpoints available: 
-    * http://localhost:8080/api/vehicles (GET): This endpoints is responsible to retrieve all vehicles from database;
+    * http://localhost:8080/api/vehicles (GET): This endpoint is responsible to retrieve all vehicles from database;
     * http://localhost:8080/api/vehicles (POST): This endpoint is responsible to create/save vehicles;
     * http://localhost:8080/api/vehicles/fuel-cost-forecast (GET): This endpoint is responsible to forecast fuel cost and returns a vehicle ordered list in descending order by fuel cost according to the parameters.
 
