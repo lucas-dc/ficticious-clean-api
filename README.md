@@ -14,7 +14,7 @@ Project for TOTVS recruitment process.
 
 **http://localhost:8080/api/vehicles (POST)**
 1. Make a POST request with **Content-Type: application/json** header and this JSON as body example:
-`
+```
 {
   "name": "Lightning McQueen",  
   "make": "Volkswagen",
@@ -23,7 +23,7 @@ Project for TOTVS recruitment process.
   "cityAverageFuelConsumption": 8.6,
   "highwayAverageFuelConsumption": 5.5
 }
-`
+```
 
 **http://localhost:8080/api/vehicles/fuel-cost-forecast (GET)**
 1. Make a GET request with these URL parameters as example:
